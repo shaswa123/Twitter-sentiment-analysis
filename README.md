@@ -18,8 +18,16 @@ The model can be divided into three parts:
 The model contains a layer of embedding for the purpose of **word embedding** with 400 demensions of vector space, an embedding also converts a word into a numerical valued feature set. This embedding helps words to be closely related to similar meaning words and is better than one-hot encoding as this is denser.
 ### Freezing
 As their is a change in the embedding layer after **General-Domain LM Pretraining** to **Target Task LM Fine-tuning** we freeze the model except the embedding layer and the decoding layer, so as to not forget everything the model has learned so far. This freezing is done for 1 epoch and then the rest of the model is unfreezed for fine-tuning.
+```python
+# This is implemented using unfreeze and freeze_to functions provided by fast.ai library
+learn.unfreeze() # To unfreeze the entire model
+learn.freeze_to(-1) # Freeze certain layers
+```
 ### Learning Rate Schedule
 This is a method to get the best learning rate. In this the learning rate is not kept constant rather it keeps on increasing from shoter steps(or smaller values of learning rate) to larger steps(or larger values of learning rate) to converge in the parameters space.
+```python
+learn.lr_find() # lr_find is a function that will give us optimal lr rate
+```
 ### Gradual unfreezing
 As for the classifier we add two linear models that have been initialized with random numbers. If the entire model is trained right now then the model can forget everything it has learned. To prevent this forgottening the model is freezed except the newly added layers. This newly added layers are trained first but this is done by freezing the model upto second last layer and fine-tuned for 1 epoch and then again fine-tuned while freezing upto newly added layers for 1 epoch. After this rest of the model is unfrozen to be fine-tuned.
 ## Benchmarks
