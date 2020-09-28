@@ -41,5 +41,16 @@ min_grad_lr = learn.recorder.min_grad_lr # use this lr value while training
 ```
 ### Gradual unfreezing
 As for the classifier we add two linear models that have been initialized with random numbers. If the entire model is trained right now then the model can forget everything it has learned. To prevent this forgottening the model is freezed except the newly added layers. This newly added layers are trained first but this is done by freezing the model upto second last layer and fine-tuned for 1 epoch and then again fine-tuned while freezing upto newly added layers for 1 epoch. After this rest of the model is unfrozen to be fine-tuned.
+
+We first unfreeze and train the last 2 layers.
+```python
+learn.freeze_to(-2)
+learn.fit_one_cycle(1, slice(5e-3/2., 5e-3))
+```
+We then unfreeze the entire model and train.
+```python
+learn.unfreeze()
+learn.fit_one_cycle(1, slice(2e-3/100, 2e-3))
+```
 ## Benchmarks
 The model is able to reach upto 82.2% accuracy. For the entire code please look into the colab notebook.
