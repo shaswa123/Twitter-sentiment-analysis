@@ -1,4 +1,4 @@
-# Twitter-sentiment-analysis using ULMFiT
+# Twitter sentiment analysis using ULMFiT
 Downstreaming ULMFiT for the purpose of tweet sentiment analysis(a classification problem).
 
 [Link to the colab notebook.](https://colab.research.google.com/drive/1ijcUtw5eQP66Mu4af_x6eNiVpEl8dcUM#scrollTo=9juKzwz8dw3q)
