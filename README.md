@@ -8,6 +8,14 @@ The dataset comes from kaggle([link](https://www.kaggle.com/kazanova/sentiment14
 
 ## ULMFiT
 This is a language model created by **fast.ai** and can be used to downstream for various problems. Our problem today is a classficiation problem. This model is provided via fastai library in python that is build upon pytourch framework. The model can be trained within hours to fit a certain surpervised problem. The fastai library also comes with a **Tokenizer** and **Numericalizer** that will convert the text into appropriate tokens that can then be fed into the Neural Network.
+```python
+# Language model data
+data_lm = TextLMDataBunch.from_df(path='./dataset', train_df=train_df, valid_df=valid_df)
+# Classifier model data
+data_clas = TextClasDataBunch.from_df(path='./dataset',train_df=train_df, valid_df=valid_df, vocab=data_lm.train_ds.vocab, bs=32)
+# Display first 5 rows
+data_lm.show_batch(rows=5)
+```
 ### Inductive transfer learning
 **Transfer learning** is a method by which models can transfer the knowledge acquired while training for one task(source task) to be used while training and predicting for another task(called target task). For transfer learning to become **Inductive transfer learning** it has to match two criteria: (1) the source task has to be different from the target task; (2) labeled data has to available in the target domain. As the ULMFiT model was trained as a launage model and our target is to process tweets for sentiment analysis, we are able to fit the criteria very well.
 ### Architecture of the model
@@ -26,9 +34,12 @@ learn.freeze_to(-1) # Freeze certain layers
 ### Learning Rate Schedule
 This is a method to get the best learning rate. In this the learning rate is not kept constant rather it keeps on increasing from shoter steps(or smaller values of learning rate) to larger steps(or larger values of learning rate) to converge in the parameters space.
 ```python
+learn = language_model_learner(data_lm, AWD_LSTM, drop_mult=0.5)
 learn.lr_find() # lr_find is a function that will give us optimal lr rate
+learn.recorder.plot(suggestion=True, return_fig=True)
+min_grad_lr = learn.recorder.min_grad_lr # use this lr value while training
 ```
 ### Gradual unfreezing
 As for the classifier we add two linear models that have been initialized with random numbers. If the entire model is trained right now then the model can forget everything it has learned. To prevent this forgottening the model is freezed except the newly added layers. This newly added layers are trained first but this is done by freezing the model upto second last layer and fine-tuned for 1 epoch and then again fine-tuned while freezing upto newly added layers for 1 epoch. After this rest of the model is unfrozen to be fine-tuned.
 ## Benchmarks
-The model is able to reach upto 82.2% accuracy.
+The model is able to reach upto 82.2% accuracy. For the entire code please look into the colab notebook.
